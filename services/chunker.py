@@ -1,20 +1,30 @@
 import nltk
 from nltk.tokenize import sent_tokenize
+from utils.logger import logger
 
 nltk.download("punkt", quiet=True)
 
+
 def chunk_text(text: str, size=500, overlap=50):
-    sentences = sent_tokenize(text)
-    chunks, current = [], ""
+    logger.info("Starting text chunking")
 
-    for s in sentences:
-        if len(current) + len(s) > size:
+    try:
+        sentences = sent_tokenize(text)
+        chunks, current = [], ""
+
+        for sentence in sentences:
+            if len(current) + len(sentence) > size:
+                chunks.append(current.strip())
+                current = current[-overlap:] + sentence
+            else:
+                current += " " + sentence
+
+        if current.strip():
             chunks.append(current.strip())
-            current = current[-overlap:] + s
-        else:
-            current += " " + s
 
-    if current.strip():
-        chunks.append(current.strip())
+        logger.info("Text chunking completed. Total chunks: %d", len(chunks))
+        return chunks
 
-    return chunks
+    except Exception as e:
+        logger.error("Error while chunking text: %s", str(e))
+        raise

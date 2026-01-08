@@ -1,16 +1,27 @@
 from utils.llm_utils import llm
+from utils.logger import logger
 
 
 def generate_answer(question: str, contexts: list[str]) -> str:
-    prompt = f"""You are a helpful AI chatbot assistant.
-    Answer the user's question clearly and accurately using ONLY the information provided in the context below.
-    If the answer is not present in the context, respond with: "The answer is not available in the provided context."
+    logger.info("Generating answer from LLM")
+    logger.info("Question: %s", question)
+    logger.info("Contexts: %s", contexts)
+    try:
+        prompt = f"""You are a helpful AI chatbot assistant.
 
-    Context:
-    {chr(10).join(contexts)}
+       your task is understand the question and provide a concise and accurate answer based on the provided context. If the context does not contain sufficient information to answer the question, respond with "I don't know. No relevant context found."
 
-    Question:
-    {question}
-    """
+        Context:
+        {chr(10).join(contexts)}
 
-    return llm.invoke(prompt).content
+        Question:
+        {question}
+        """
+
+        response = llm.invoke(prompt)
+        logger.info("Answer generated successfully")
+        return response.content
+
+    except Exception as e:
+        logger.error("Error while generating answer: %s", str(e))
+        raise
