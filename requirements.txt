@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+pdfplumber
+nltk
+rank-bm25
+scikit-learn
+numpy
+python-dotenv
+langchain
+langchain-openai
+requests
